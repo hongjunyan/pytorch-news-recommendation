@@ -13,6 +13,7 @@ So I want to share my implementation.
 - PyTorch == 1.8.1
 - Tensorflow == 2.6.1  # Only used for "recommenders", we will use "recommenders" package to download data
 - recommenders==1.1.1
+
 You can easily install dependencies by the following command 
 ```commandline
 $> pip install -r requirements.txt
