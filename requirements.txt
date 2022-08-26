@@ -1,0 +1,3 @@
+tensorflow==2.6.1
+recommenders==1.1.1
+torch==1.8.1

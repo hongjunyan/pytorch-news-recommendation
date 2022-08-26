@@ -1,0 +1,12 @@
+# Files
+*.ipynb_checkpoints
+*.ipynb
+temp_will_remove*
+try*
+cache*
+
+# Folders
+*__pycache__/
+*.idea/
+model_save/
+MIND_data*
