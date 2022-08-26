@@ -2,8 +2,7 @@
 
 NPA paper: https://arxiv.org/pdf/1907.05559.pdf
 
-Since the [original implementation](https://github.com/wuch15/KDD-NPA) of NPA used Keras, and the [implementation](https://github.com/microsoft/recommenders/blob/main/recommenders/models/newsrec/models/npa.py) of Microsoft recommenders was also Keras. According to the results of my own survey, no one used pytorch to implement NPA at present.
-So I want to share my implementation.
+Since the [original implementation](https://github.com/wuch15/KDD-NPA) of NPA used Keras, and the [implementation](https://github.com/microsoft/recommenders/blob/main/recommenders/models/newsrec/models/npa.py) of Microsoft recommenders was also Keras. So I want to share my PyTorch implementation.
 
 ## Dataset
 - [MIND](https://msnews.github.io/): the description about MIND dataset can refer to [this document](https://github.com/msnews/msnews.github.io/blob/master/assets/doc/introduction.md)
