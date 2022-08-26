@@ -2,7 +2,7 @@
 
 NPA paper: https://arxiv.org/pdf/1907.05559.pdf
 
-Since the [original implementation](https://github.com/wuch15/KDD-NPA) of NPA uses Keras, and the [implementation](https://github.com/microsoft/recommenders/blob/main/recommenders/models/newsrec/models/npa.py) of Microsoft recommenders was also Keras. According to the results of my own survey, no one used pytorch to implement NPA at present.
+Since the [original implementation](https://github.com/wuch15/KDD-NPA) of NPA used Keras, and the [implementation](https://github.com/microsoft/recommenders/blob/main/recommenders/models/newsrec/models/npa.py) of Microsoft recommenders was also Keras. According to the results of my own survey, no one used pytorch to implement NPA at present.
 So I want to share my implementation.
 
 ## Dataset
@@ -13,6 +13,10 @@ So I want to share my implementation.
 - PyTorch == 1.8.1
 - Tensorflow == 2.6.1  # Only used for "recommenders", we will use "recommenders" package to download data
 - recommenders==1.1.1
+You can easily install dependencies by the following command 
+```commandline
+$> pip install -r requirements.txt
+```
 
 ## How to run the code
 1. Try a toy example, train_npa.py will download "demo" dataset of MIND and train a simple model which only trained 1 epoch:
