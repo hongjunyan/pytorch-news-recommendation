@@ -52,7 +52,7 @@ $> python train_npa.py --mind_type large --epochs 15 --title_size 30
 
 # gpu version
 $> python train_npa.py --mind_type large --epochs 15 --title_size 30 --device 0
------------ Training Result t-------------------
+----------- Training Result-------------------
 Model use gpu 0
 Total Parameters: 93975900
 Number of Users: 711222, Number of vocab: 74307
