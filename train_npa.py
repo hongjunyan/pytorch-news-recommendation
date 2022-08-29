@@ -41,8 +41,8 @@ print(f"Evaluating before training......")
 valid_iter = trainer.get_valid_iter(valid_news_file, valid_behaviors_file)
 res = trainer.evaluate(valid_iter)
 print(f"Evaluated result before training: {res}")
+
 print("Start Training ......")
 trainer.fit(train_news_file, train_behaviors_file, valid_news_file, valid_behaviors_file)
 trainer.save()  # save model in hparams.save_dir
 print("Finish Training")
-

@@ -11,7 +11,7 @@ class NPAModel(BasicTorchModule):
         super(NPAModel, self).__init__(hparams)
         self.hparams = hparams
         # the first dimension of user_embedding is always 0's. (for unknown user)
-        self.user_embedding = nn.Embedding(hparams.user_num, hparams.user_emb_dim)
+        self.user_embedding = nn.Embedding(hparams.user_num+1, hparams.user_emb_dim, padding_idx=0)
         self.linear_q_word = nn.Linear(hparams.user_emb_dim, hparams.attention_hidden_dim)
         self.linear_q_news = nn.Linear(hparams.user_emb_dim, hparams.attention_hidden_dim)
         self.news_encoder = NewsEncoder(hparams)
