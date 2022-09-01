@@ -1,7 +1,6 @@
 # PyTorch implementation for news recommendation algorithm
 
-The implementation of Microsoft's [recommenders] used Keras. 
-For practice, I tried to implement the algorithms in the [recommenders] with PyTorch
+For practice, I tried to implement the news recommendation algorithms in the [recommenders] with PyTorch
 
 
 ## Implemented Algorithms
