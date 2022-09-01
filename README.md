@@ -35,20 +35,20 @@ $> pip install -r requirements.txt
 1. Try a toy example, train_model.py will download "demo" dataset of MIND and train a simple model which only trained 1 epoch:
 ```commandline
 # cpu version
-$> python train_npa.py --mind_type demo --epochs 1
+$> python train_npa.py --mind_type demo --model_type nrms --epochs 1
 
 # gpu version
-$> python train_npa.py --mind_type demo --epochs 1 --device 0
+$> python train_npa.py --mind_type demo --model_type nrms --epochs 1 --device 0
 ```
 
 
 2. Train a model with MIND-large dataset:
 ```commandline
 # cpu version
-$> python train_npa.py --mind_type large --epochs 10 --title_size 30
+$> python train_npa.py --mind_type large --model_type nrms --epochs 10 --title_size 30
 
 # gpu version
-$> python train_npa.py --mind_type large --epochs 10 --title_size 30 --device 0
+$> python train_npa.py --mind_type large --model_type nrms --epochs 10 --title_size 30 --device 0
 ```
 ## Results
 | Algorithms \ Metrics | AUC    | MRR    | ndcg@5 | ndcg@10 |
