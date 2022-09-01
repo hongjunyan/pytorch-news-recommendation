@@ -9,7 +9,7 @@ For practice, I tried to implement the news recommendation algorithms in the [re
 
 
 ## Dataset
-Take it easy, don't download the dataset first, We will automatically download the dataset in `train_model.py`
+Take it easy, do not download the dataset first, We will automatically download the dataset in `train_model.py`
 - [MIND]: the description about MIND dataset can refer to [this document](https://github.com/msnews/msnews.github.io/blob/master/assets/doc/introduction.md)
 
 
