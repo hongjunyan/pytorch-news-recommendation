@@ -4,17 +4,19 @@ from utils import HyperParams, Trainer, download_mind_data
 
 
 parser = argparse.ArgumentParser()
-parser.add_argument('--config', type=str, default="./config.json")
 parser.add_argument('--mind_type', type=str, default="demo", help='One of {demo, small, large}')
+parser.add_argument('--model_type', type=str, default="nrms", help='One of {npa, nrms}')
 parser.add_argument('--batch_size', type=int, default="32")
 parser.add_argument('--epochs', type=int, default="1")
 parser.add_argument('--title_size', type=int, default="10")
 parser.add_argument('--device', type=int, default=None)
+parser.add_argument('--seed', type=int, default="42")
 parser.add_argument('--save_dir', type=str, default="./model_save")
 
 # Set hyper-parameter
 args = parser.parse_args()
-hparams = HyperParams(args.config)
+model_config_file = f"config/{args.model_type}.yaml"
+hparams = HyperParams(model_config_file)
 hparams.update(**args.__dict__)
 print("-"*30)
 print(hparams)
@@ -38,8 +40,7 @@ hparams.wordDict_file = os.path.join(data_dir, "utils", "word_dict.pkl")
 # Training
 trainer = Trainer(hparams)
 print(f"Evaluating before training......")
-valid_iter = trainer.get_valid_iter(valid_news_file, valid_behaviors_file)
-res = trainer.evaluate(valid_iter)
+res = trainer.evaluate(valid_news_file, valid_behaviors_file)
 print(f"Evaluated result before training: {res}")
 
 print("Start Training ......")
