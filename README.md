@@ -68,6 +68,6 @@ $> python train_model.py --mind_type large --model_type nrms --epochs 10 --title
 - [2] Chuhan Wu, Fangzhao Wu, Suyu Ge, Tao Qi, Yongfeng Huang, and Xing Xie. 2019c. Neural news recommendation with multi-head selfattention. In EMNLP-IJCNLP, pages 6390–6395.
 
 [recommenders]: https://github.com/microsoft/recommenders/tree/b704c420ee20b67a9d756ddbfdf5c9afd04b576b
-[NPA]: https://arxiv.org/pdf/1907.05559.pdf
+[NPA]: https://dl.acm.org/doi/10.1145/3292500.3330665
 [NRMS]: https://aclanthology.org/D19-1671.pdf
 [MIND]: https://msnews.github.io/
