@@ -6,12 +6,12 @@ from utils import HyperParams, Trainer, download_mind_data
 parser = argparse.ArgumentParser()
 parser.add_argument('--mind_type', type=str, default="demo", help='One of {demo, small, large}')
 parser.add_argument('--model_type', type=str, default="nrms", help='One of {npa, nrms}')
-parser.add_argument('--batch_size', type=int, default="32")
-parser.add_argument('--epochs', type=int, default="1")
-parser.add_argument('--title_size', type=int, default="10")
-parser.add_argument('--device', type=int, default=None)
-parser.add_argument('--seed', type=int, default="42")
-parser.add_argument('--save_dir', type=str, default="./model_save")
+parser.add_argument('--batch_size', type=int, default="32", help='batch size')
+parser.add_argument('--epochs', type=int, default="1", help='number of epochs')
+parser.add_argument('--title_size', type=int, default="10", help='Maximum number of words in title')
+parser.add_argument('--device', type=int, default=None, help="device index to select")
+parser.add_argument('--seed', type=int, default="42", help='random seed')
+parser.add_argument('--save_dir', type=str, default="./model_save", help="set a directory to save trained model")
 
 # Set hyper-parameter
 args = parser.parse_args()

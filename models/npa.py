@@ -144,6 +144,7 @@ class NPAModel(BasicTorchModule):
         """
         batch_logits = self(batch_input)  # B x 1
         batch_y_head = torch.sigmoid(batch_logits)  # B x 1
+
         return batch_y_head
 
     def get_input_label_from_iter(self, batch_data):

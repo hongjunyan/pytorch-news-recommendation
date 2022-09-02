@@ -19,6 +19,7 @@ class BasicTorchModule(nn.Module):
         else:
             best_path = self.save_dir.joinpath(file_name)
         torch.save(checkpoint, str(best_path))
+
         return str(best_path)
 
     def load(self, file_name: str = None) -> nn.Module:

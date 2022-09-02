@@ -24,6 +24,6 @@ train:
   batch_size: 32
   epochs: 10
   learning_rate: 0.0001
-  loss: cross_entropy_loss
+  loss: nll_loss
   optimizer: adam
   support_quick_scoring: true

@@ -20,6 +20,7 @@ class NewsEncoder(nn.Module):
             batch_news_word_emb, batch_news_word_emb, batch_news_word_emb)  # B x N x T x selfatt_dim
         batch_news_word_repz = self.dropout(batch_news_word_repz)  # B x N x T x word_emb_dim
         batch_news_repz = self.attenlayer(batch_news_word_repz)  # B x N x attention_hidden_dim
+
         return batch_news_repz
 
 
@@ -85,6 +86,7 @@ class NRMSModel(BasicTorchModule):
         """
         batch_logits = self(batch_input)  # B x 1
         batch_y_head = torch.sigmoid(batch_logits)  # B x 1
+
         return batch_y_head
 
     def get_input_label_from_iter(self, batch_data):
@@ -106,25 +108,35 @@ class NRMSModel(BasicTorchModule):
         return (batch_his_title_indices, batch_cand_title_indices), batch_labels_idx
 
     def get_news_feature_from_iter(self, batch_data):
-        """get input of news encoder
-        Args:
-            batch_data: input batch data from news iterator
-        Returns:
-            numpy.ndarray: input news feature (candidate title batch), shape is B x T
+        """
+        DESCRIPTION:
+            Get input of news encoder
+        INPUTS:
+            batch_data: Dict[str, np.ndarray]
+                input batch data from news iterator, dict[feature_name] = feature_value
+        RETURN:
+            batch_cand_title_indices: torch.FloatTensor
+                shape is B x T
         """
         batch_cand_title_indices = torch.from_numpy(batch_data["candidate_title_batch"])
         if self.hparams.use_gpu:
             batch_cand_title_indices = batch_cand_title_indices.cuda()
+
         return batch_cand_title_indices
 
     def get_user_feature_from_iter(self, batch_data):
-        """get input of user encoder
-        Args:
-            batch_data: input batch data from user iterator
-        Returns:
-            numpy.ndarray: input user feature (clicked title batch), shape is B x N x T
+        """
+        DESCRIPTION:
+            Get input of user encoder
+        INPUTS:
+            batch_data: Dict[str, np.ndarray]
+                input batch data from user iterator, dict[feature_name] = feature_value
+        RETURN:
+            batch_his_title_indices: torch.FloatTensor
+                shape is B x N x T
         """
         batch_his_title_indices = torch.from_numpy(batch_data["clicked_title_batch"])
         if self.hparams.use_gpu:
             batch_his_title_indices = batch_his_title_indices.cuda()
+
         return batch_his_title_indices
