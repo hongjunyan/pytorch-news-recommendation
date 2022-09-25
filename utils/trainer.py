@@ -9,7 +9,7 @@ import numpy as np
 
 # Customize module
 from utils import HyperParams, groupping_labels, cal_metric, MINDIterator
-from models import NPAModel, NRMSModel
+from models import NPAModel, NRMSModel, FastFormerNewsRecModel
 
 
 class Trainer(object):
@@ -17,7 +17,8 @@ class Trainer(object):
         self.hparams = hparams
         self.support_models = {
             "npa": NPAModel,
-            "nrms": NRMSModel
+            "nrms": NRMSModel,
+            "fastformer": FastFormerNewsRecModel
         }
 
         # Set gpu device if available

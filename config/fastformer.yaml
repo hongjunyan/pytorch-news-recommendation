@@ -1,0 +1,33 @@
+data:
+  title_size: 30
+  his_size: 50
+  data_format: news
+  npratio: 4
+
+info:
+  metrics:
+  - group_auc
+  - mean_mrr
+  - ndcg@5;10
+  show_step: 100000
+
+model:
+  d_model: 300
+  word_emb_dim: 300
+  nhead: 20
+  intermediate_size: 256
+
+  num_encoder_layers: 1
+
+  layer_norm_eps: 1e-12
+  dropout: 0.2
+
+  model_type: fastformer
+
+train:
+  batch_size: 32
+  epochs: 10
+  learning_rate: 0.0001
+  loss: nll_loss
+  optimizer: adam
+  support_quick_scoring: true

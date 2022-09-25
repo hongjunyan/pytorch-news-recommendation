@@ -184,3 +184,78 @@ def additive_attention(query, key, value):
     scores = torch.softmax(scores, dim=-1)  # B x N x H x T x T
     batch_repzs = torch.matmul(scores, value)  # B x N x H x T x head_dim
     return batch_repzs
+
+
+class SinusoidalPositionalEncoding(nn.Module):
+    __refUrl__ = "https://kazemnejad.com/blog/transformer_architecture_positional_encoding/"
+
+    def __init__(self, d_model, max_len=5000):
+        super(SinusoidalPositionalEncoding, self).__init__()
+        pe = torch.zeros(max_len, d_model)
+        position = torch.arange(0, max_len, dtype=torch.float).unsqueeze(1)
+        div_term = torch.exp(torch.arange(0, d_model, 2).float() * (-math.log(10000.0) / d_model))
+        pe[:, 0::2] = torch.sin(position * div_term)
+        pe[:, 1::2] = torch.cos(position * div_term)
+        pe = pe.unsqueeze(0).transpose(0, 1)
+        # pe.requires_grad = False
+        self.register_buffer('pe', pe)
+
+    def forward(self, input_embeds):
+        """
+        x: B x T x D
+        pe: T x 1 x D
+        """
+        input_embeds = input_embeds.transpose(0, 1)  # T x B x D
+        embed_with_position = input_embeds + self.pe[:input_embeds.size(0), :]  # T x B x D
+        embed_with_position = embed_with_position.transpose(0, 1)  # B x T x D
+        return embed_with_position
+
+
+class EmbeddedPositionEncoding(nn.Module):
+    def __init__(self, d_model, max_len):
+        super(EmbeddedPositionEncoding, self).__init__()
+        self.position_embeddings = nn.Embedding(max_len, d_model)
+
+    def forward(self, input_embeds):
+        """
+        x: B x T x D
+        pe: T x 1 x D
+        """
+        batch_size, seq_length, emb_dim = input_embeds.shape
+        position_ids = torch.arange(seq_length, dtype=torch.long, device=input_embeds.device)
+        position_ids = position_ids.unsqueeze(0).expand(batch_size, -1)
+        position_embeddings = self.position_embeddings(position_ids)
+        embeddings = input_embeds + position_embeddings
+
+        return embeddings
+
+
+class AdditiveAttentionPooling(nn.Module):
+
+    def __init__(self, d_model):
+        super(AdditiveAttentionPooling, self).__init__()
+        self.wc = nn.Linear(d_model, d_model)
+        self.ws = nn.Linear(d_model, 1)
+        self.tanh = nn.Tanh()
+        self.softmax = nn.Softmax(dim=1)
+
+    def forward(self, hidden_states, mask_scores):
+        """
+        Inputs:
+            hidden_states: torch.FloastTensor
+                the output of fastformer/transformer encoder, shape is B x T x d_model
+
+            mask_scores: torch.FloatTensor
+                score for each timestamp. -10000 for padding idx, otherwise is 0, shape is B x T
+        """
+        atten_vecs = self.wc(hidden_states)  # B x T x d_model
+        atten_vecs = self.tanh(atten_vecs)  # B x T x d_model
+        scores = self.ws(atten_vecs)  # B x T x 1
+        extended_mask_scores = mask_scores.unsqueeze(2)  # B x T x 1
+        scores += extended_mask_scores  # B x T x 1
+        scores = self.softmax(scores)  # B x T x 1
+        hidden_states_T = hidden_states.transpose(1, 2)  # B x d_model x T
+        output = torch.bmm(hidden_states_T, scores)  # B x d_model x 1
+        output = output.squeeze(-1)  # B x d_model
+
+        return output
