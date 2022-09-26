@@ -193,18 +193,18 @@ class UserEncoder(nn.Module):
                                            for _ in range(hparams.num_encoder_layers)])
         self.attention_pooling = AdditiveAttentionPooling(hparams.d_model)
 
-    def forward(self, batch_candidate_news_repz):
+    def forward(self, batch_his_news_repz):
         """
         Inputs:
             batch_candidate_news_repz: torch.FloatTensor
                 the output of NewsEncoder and then reshape as B x N x d_model
         """
-        B, N, D = batch_candidate_news_repz.size()
+        B, N, D = batch_his_news_repz.size()
         mask_scores = torch.zeros([B, N])  # B x N
         if self.hparams.use_gpu:
             mask_scores = mask_scores.cuda()
         extended_mask_scores = mask_scores.unsqueeze(1)  # B x 1 x N
-        hidden_states = batch_candidate_news_repz  # B x N x d_model
+        hidden_states = batch_his_news_repz  # B x N x d_model
 
         for seq_encoder in self.seq_encoders:
             hidden_states = seq_encoder(hidden_states, extended_mask_scores)  # B x N x d_model
@@ -253,8 +253,12 @@ class FastSelfAttention(nn.Module):
         self.nhead = nhead
         self.d_model = d_model
         self.head_dim = int(d_model // nhead)
-        self.head_wq = nn.Parameter(torch.FloatTensor(nhead, self.head_dim))
-        self.head_wk = nn.Parameter(torch.FloatTensor(nhead, self.head_dim))
+        initrange = 0.5 / self.head_dim
+        # Notice if the FloatTensor didn't initialize, the value of it may appear nan.
+        # Therefore, please remember to do initialize!!.
+        # In our case, we initialized FloatTensor with uniform distribution
+        self.head_wq = nn.Parameter(torch.FloatTensor(nhead, self.head_dim).uniform_(-initrange, initrange))
+        self.head_wk = nn.Parameter(torch.FloatTensor(nhead, self.head_dim).uniform_(-initrange, initrange))
         self.transform = nn.Linear(d_model, d_model)
         self.softmax = nn.Softmax(dim=-1)
 
