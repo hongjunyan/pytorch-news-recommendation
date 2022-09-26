@@ -184,6 +184,7 @@ class NewsEncoder(nn.Module):
 class UserEncoder(nn.Module):
     def __init__(self, hparams):
         super(UserEncoder, self).__init__()
+        self.hparams = hparams
         self.seq_encoders = nn.ModuleList([FastFormerEncoder(hparams.d_model,
                                                              hparams.nhead,
                                                              hparams.intermediate_size,
@@ -200,6 +201,8 @@ class UserEncoder(nn.Module):
         """
         B, N, D = batch_candidate_news_repz.size()
         mask_scores = torch.zeros([B, N])  # B x N
+        if self.hparams.use_gpu:
+            mask_scores = mask_scores.cuda()
         extended_mask_scores = mask_scores.unsqueeze(1)  # B x 1 x N
         hidden_states = batch_candidate_news_repz  # B x N x d_model
 
