@@ -6,58 +6,51 @@ For practice, I tried to implement the news recommendation algorithms in the [re
 ## Implemented Algorithms
 - [NPA] (Wu et al., 2019, SIGKDD) [1]
 - [NRMS] (Wu et al., 2019, IJCNLP) [2]
-- [Fastformer] (Wu et al., 2021, arxiv)  TODO
+- [Fastformer] (Wu et al., 2021, arxiv) [3]
 
 
 ## Dataset
 Take it easy, do not download the dataset first, We will automatically download the dataset in `train_model.py`
 - [MIND]: the description about MIND dataset can refer to [this document](https://github.com/msnews/msnews.github.io/blob/master/assets/doc/introduction.md)
 
-
 ## Environment
 - OS: windows 10 / Ubuntu 18.04
 - Python == 3.7.13
-- PyTorch == 1.8.2
+- mlflow == 1.29.0
 
-Please follow the commands bellow:
-1. Install the long-term supported PyTorch version:
-```commandline
-# cpu version
-$> pip install torch==1.8.2 --extra-index-url https://download.pytorch.org/whl/lts/1.8/cpu
-# gpu version
-$> pip install torch==1.8.2 --extra-index-url https://download.pytorch.org/whl/lts/1.8/cu102
+Please follow the setup steps bellow:
+1. Install [Anaconda](https://www.anaconda.com/products/distribution)
+2. Create a virtual environment by using conda command 
 ```
-2. Install the remaining dependencies
+$> conda env create -n deepnewsrec python=3.7.13
+```
+3. Activate the virtual environment we created
 ```commandline
-$> pip install -r requirements.txt
+$> conda activate deepnewsrec
+```
+4. Install mlflow
+```commandline
+(deepnewsrec)$> pip install mlflow==1.29.0
 ```
 
 ## How to run the code
-1. Try a toy example, train_model.py will download "demo" dataset of MIND and train a simple model which only trained 1 epoch:
+Try a toy example with `mind_type=demo` and `epochs=1` 
 ```commandline
-# show parameter hints
-$> python train_model.py --help
-
-# cpu version
-$> python train_model.py --mind_type demo --model_type nrms --epochs 1
-
-# gpu version
-$> python train_model.py --mind_type demo --model_type nrms --epochs 1 --device 0
+$> mlflow run -e train --experiment-name individual_runs -P mind_type=demo -P epochs=1 .
+```
+- Run hyperparameter tuning
+```commandline
+$> mlflow run -e tune_with_ray --experiment-name tune_hyperparams -P mind_type=demo -P epochs=1 .
 ```
 
+if you want to train a formal model, please use `mind_type=large`.
 
-2. Train a formal model with MIND-large dataset, and the performance in the next section:
-```commandline
-# cpu version
-$> python train_model.py --mind_type large --model_type nrms --epochs 10 --title_size 30 --batch_size 128
 
-# gpu version
-$> python train_model.py --mind_type large --model_type nrms --epochs 10 --title_size 30 --batch_size 128 --device 0
-```
-## Results
+## Results of Formal Model
 | Algorithms \ Metrics | AUC        | MRR        | NDCG@5     | NDCG@10    |
 |----------------------|------------|------------|------------|------------|
-| NPA                  | 0.6655     | 0.3171     | 0.4143     | 0.3504     |
+| NPA                  | 0.6655     | 0.3171     | 0.3504     | 0.4143     |
+| FastFormer           | 0.6752     | 0.3222     | 0.3559     | 0.4206     |
 | NRMS                 | **0.6822** | **0.3307** | **0.3655** | **0.4311** |
 
 ## Related projects
@@ -66,8 +59,13 @@ $> python train_model.py --mind_type large --model_type nrms --epochs 10 --title
 ## Reference papers
 - [1] Chuhan Wu, Fangzhao Wu, Mingxiao An, Jianqiang Huang, Yongfeng Huang, and Xing Xie. 2019b. Npa: Neural news recommendation with personalized attention. In KDD, pages 2576–2584. ACM.
 - [2] Chuhan Wu, Fangzhao Wu, Suyu Ge, Tao Qi, Yongfeng Huang, and Xing Xie. 2019c. Neural news recommendation with multi-head selfattention. In EMNLP-IJCNLP, pages 6390–6395.
+- [3] Chuhan Wu, Fangzhao Wu, Tao Qi, Yongfeng Huang, and Xing Xie. 2021. Fastformer: Additive attention can be all you need. arXiv preprint arXiv:2108.09084(2021)
 
 [recommenders]: https://github.com/microsoft/recommenders/tree/b704c420ee20b67a9d756ddbfdf5c9afd04b576b
 [NPA]: https://dl.acm.org/doi/10.1145/3292500.3330665
 [NRMS]: https://aclanthology.org/D19-1671.pdf
 [MIND]: https://msnews.github.io/
+[Fastformer]: https://arxiv.org/pdf/2108.09084.pdf
+
+## Some TroubleShotting:
+- Nan in Tensor (refer to FastSelfAttention in models/fastformer.py): https://discuss.pytorch.org/t/why-i-keep-getting-nan/20383

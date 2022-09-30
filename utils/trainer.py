@@ -6,14 +6,16 @@ import random
 from tqdm import tqdm
 import torch
 import numpy as np
+import mlflow
 
 # Customize module
+from utils import ModelLogger
 from utils import HyperParams, groupping_labels, cal_metric, MINDIterator
 from models import NPAModel, NRMSModel, FastFormerNewsRecModel
 
 
 class Trainer(object):
-    def __init__(self, hparams: HyperParams):
+    def __init__(self, hparams: HyperParams, run_uuid):
         self.hparams = hparams
         self.support_models = {
             "npa": NPAModel,
@@ -46,7 +48,7 @@ class Trainer(object):
         msg = ""
         self.hparams.use_gpu = False
         if torch.cuda.is_available():
-            if self.hparams.device is None:
+            if self.hparams.device is None or self.hparams.device == -1:
                 print("WARNING: You have a CUDA device, should run with --device 0")
                 msg = "use cpu"
             else:
@@ -177,68 +179,35 @@ class Trainer(object):
             valid_news_file,
             valid_behaviors_file):
 
-        best_eval_auc = 0
-        best_eval_res = None
+        best_auc = 0
+        total_step = 0
         for epoch in range(1, self.hparams.epochs+1):
-            step = 0
             self.hparams.current_epoch = epoch
+            step = 0
             epoch_loss = 0
 
             # Training
-            train_start = time.time()
             train_iter = self.train_iterator.load_data_from_file(train_news_file, train_behaviors_file)
             tqdm_util = tqdm(train_iter, desc="training")
             for batch_data in tqdm_util:
                 step_data_loss = self.train(batch_data)
                 epoch_loss += step_data_loss
                 step += 1
+                total_step += 1
                 if step % self.hparams.show_step == 0:
-                    tqdm_util.set_description(
-                        "step {0:d} , total_loss: {1:.4f}, data_loss: {2:.4f}".format(
-                            step, epoch_loss / step, step_data_loss
-                        )
-                    )
-            train_end = time.time()
-            train_time = train_end - train_start
-            train_info = ",".join(
-                [
-                    str(item[0]) + ":" + str(item[1])
-                    for item in [("negative log likelihood loss", epoch_loss / step)]
-                ]
-            )
+                    eval_res = self.evaluate(valid_news_file, valid_behaviors_file)
+                    mlflow.log_metric("train_loss", epoch_loss / step, total_step)
+                    for item in sorted(eval_res.items(), key=lambda x: x[0]):
+                        valid_name = item[0].replace("@", "_")
+                        mlflow.log_metric(valid_name, item[1], total_step)
 
-            # Evaluation
-            eval_start = time.time()
-            eval_res = self.evaluate(valid_news_file, valid_behaviors_file)
-            eval_info = ", ".join(
-                [
-                    str(item[0]) + ":" + str(item[1])
-                    for item in sorted(eval_res.items(), key=lambda x: x[0])
-                ]
-            )
-            eval_end = time.time()
-            eval_time = eval_end - eval_start
-
-            print(
-                "at epoch {0:d}".format(epoch)
-                + "\ntrain info: "
-                + train_info
-                + "\neval info: "
-                + eval_info
-            )
-
-            print(
-                "at epoch {0:d} , train time: {1:.1f}s eval time: {2:.1f}s".format(
-                    epoch, train_time, eval_time
-                )
-            )
-
-            # record the best result
-            if eval_res["group_auc"] > best_eval_auc:
-                best_eval_auc = eval_res["group_auc"]
-                best_eval_res = f"Best result at {epoch}: {eval_info}"
-
-        print(best_eval_res)
+                    if best_auc < eval_res["group_auc"]:
+                        best_auc = eval_res["group_auc"]
+                        mlflow.log_metrics({
+                            "best_auc": best_auc,
+                            "best_epoch": epoch,
+                            "best_step": total_step
+                        })
 
     def save(self):
         self.model.save()

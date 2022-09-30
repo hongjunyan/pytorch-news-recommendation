@@ -4,9 +4,15 @@
 temp_will_remove*
 try*
 cache*
+condaenv*
+fake*
+*.pkl
 
 # Folders
 *__pycache__/
 *.idea/
 model_save/
+ray_tune/
 MIND_data*
+mlruns/
+tensorboard/

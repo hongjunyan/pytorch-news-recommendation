@@ -1,0 +1,62 @@
+name: Deep-News-Recommendatoin
+
+conda_env: conda.yaml
+
+entry_points:
+  train:
+    parameters:
+      mind_type: {type: string, default: "demo"}
+      model_type: {type: string, default: "fastformer"}
+      epochs: {type: int, default: 1}
+      batch_size: {type: int, default: 32}
+      title_size: {type: int, default: 10}
+      learning_rate: {type: float, default: 0.001}
+      device: {type: device_type, default: -1}
+      seed: {type: int, default: 42}
+      save_dir: {type: string, default: "./model_save"}
+    command: "python train.py --mind_type {mind_type}
+                              --model_type {model_type}
+                              --epochs {epochs}
+                              --batch_size {batch_size}
+                              --title_size {title_size}
+                              --learning_rate {learning_rate}
+                              --device {device}
+                              --seed {seed}
+                              --save_dir {save_dir}"
+  tune_with_ray:
+    parameters:
+      mind_type: {type: string, default: "demo"}
+      epochs: {type: int, default: 3}
+      device: {type: device_type, default: 0}
+      seed: {type: int, default: 42}
+      ray_dir: {type: string, default: "./ray_tune"}
+      num_samples: {type: int, default: 10}
+      gpus_per_trial: {type: float, default: 0.5}
+    command: "python tune_with_ray.py --mind_type {mind_type}
+                                          --epochs {epochs}
+                                          --device {device}
+                                          --seed {seed}
+                                          --ray_dir {ray_dir}
+                                          --num_samples {num_samples}
+                                          --gpus_per_trial {gpus_per_trial}"
+
+  fake_train:
+    parameters:
+      mind_type: {type: string, default: "demo"}
+      model_type: {type: string, default: "fastformer"}
+      epochs: {type: int, default: 1}
+      batch_size: {type: int, default: 32}
+      title_size: {type: int, default: 10}
+      learning_rate: {type: float, default: 0.001}
+      device: {type: device_type, default: -1}
+      seed: {type: int, default: 42}
+      save_dir: {type: string, default: "./model_save"}
+    command: "python fake_train.py --mind_type {mind_type}
+                              --model_type {model_type}
+                              --epochs {epochs}
+                              --batch_size {batch_size}
+                              --title_size {title_size}
+                              --learning_rate {learning_rate}
+                              --device {device}
+                              --seed {seed}
+                              --save_dir {save_dir}"

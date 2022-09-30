@@ -2,6 +2,8 @@ import re
 import yaml
 from typing import Union
 from pathlib import Path
+from torch.utils.tensorboard import SummaryWriter
+import mlflow
 
 
 def flat_config(config):
@@ -50,3 +52,26 @@ class HyperParams(object):
 
     def __repr__(self):
         return f"Hyper-Parameter: {self._cfg}"
+
+
+class ModelLogger(object):
+    def __init__(self, tensorboard_dir: str):
+        self.writer = SummaryWriter(tensorboard_dir)
+
+    def log_hparam(self, key, value):
+        mlflow.log_param(key, value)
+
+    def log_pr_curve(self, preds, labels):
+        pass
+
+    def log_scalar(self, name: str, value: float, step: int):
+        """Log a scalar value to both MLflow and TensorBoard"""
+        self.writer.add_scalar(name, value, step)
+        mlflow.log_metric(name, value, step=step)
+
+
+
+
+
+
+

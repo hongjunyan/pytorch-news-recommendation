@@ -9,7 +9,7 @@ info:
   - group_auc
   - mean_mrr
   - ndcg@5;10
-  show_step: 100000
+  show_step: 50
 
 model:
   d_model: 300
