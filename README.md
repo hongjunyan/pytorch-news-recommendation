@@ -10,11 +10,11 @@ For practice, I tried to implement the news recommendation algorithms in the [re
 
 
 ## Dataset
-Take it easy, do not download the dataset first, We will automatically download the dataset in `train_model.py`
+Take it easy, do not download the dataset first, We will automatically download the dataset in `train.py`
 - [MIND]: the description about MIND dataset can refer to [this document](https://github.com/msnews/msnews.github.io/blob/master/assets/doc/introduction.md)
 
 ## Environment
-- OS: windows 10 / Ubuntu 18.04
+- OS: Ubuntu 18.04
 - Python == 3.7.13
 - mlflow == 1.29.0
 
