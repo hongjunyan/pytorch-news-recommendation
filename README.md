@@ -47,11 +47,11 @@ $> mlflow run -e train --experiment-name individual_runs -P mind_type=demo -P ep
 ```commandline
 $> mlflow run -e tune_with_ray --experiment-name tune_hyperparams -P mind_type=demo -P epochs=1 .
 ```
-
-if you want to train a formal model, please use `mind_type=large`.
+For training a formal model, please use `mind_type=large`.
 
 ## MLFlow UI
-The experiment results recorded in `/mlruns`. You can use `mlflow ui` to open a web UI and compare the results on it.
+The experiment results recorded in `/mlruns`. 
+You can execute `mlflow ui` to see the results.
 ```commandline
 $> mlflow ui -h 127.0.0.1
 ```
