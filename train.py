@@ -1,5 +1,6 @@
 import argparse
 import traceback
+import pickle
 from pathlib import Path
 from mlflow.tracking import MlflowClient
 import mlflow
@@ -9,7 +10,7 @@ from utils import HyperParams, Trainer, download_mind_data
 
 parser = argparse.ArgumentParser()
 parser.add_argument('--mind_type', type=str, default="demo", help='One of {demo, small, large}')
-parser.add_argument('--model_type', type=str, default="nrms", help='One of {npa, nrms}')
+parser.add_argument('--model_type', type=str, default="fastformer", help='One of {npa, nrms, fastformer}')
 parser.add_argument('--epochs', type=int, default=1, help='number of epochs')
 parser.add_argument('--batch_size', type=int, default=32, help='batch size')
 parser.add_argument('--title_size', type=int, default=10, help='Maximum number of words in title')
@@ -17,7 +18,6 @@ parser.add_argument('--learning_rate', type=float, default=1e-3, help='learning_
 parser.add_argument('--device', type=int, default=-1, help="device index to select")
 parser.add_argument('--seed', type=int, default="42", help='random seed')
 parser.add_argument('--save_dir', type=str, default="./model_save", help="set a directory to save trained model")
-parser.add_argument('--save_best_model', type=bool, default=False, help="save the best model")
 
 
 # Set hyper-parameter
@@ -49,17 +49,26 @@ hparams.wordDict_file = data_dir.joinpath("utils", "word_dict.pkl")
 # ref: https://docs.databricks.com/_static/notebooks/mlflow/mlflow-pytorch-training.html
 tracking_client = MlflowClient()
 
+
 with mlflow.start_run() as run:
     try:
-        trainer = Trainer(hparams, run.info.run_uuid)
+        trainer = Trainer(hparams)
         print(f"Evaluating before training......")
         res = trainer.evaluate(valid_news_file, valid_behaviors_file)
         print(f"Evaluated result before training: {res}")
 
         print("Start Training ......")
         trainer.fit(train_news_file, train_behaviors_file, valid_news_file, valid_behaviors_file)
-        if args.save_best_model:
-            trainer.save()  # save model in hparams.save_dir
+
+        cache = Path("./cache")
+        if not cache.exists():
+            cache.mkdir(parents=True, exist_ok=True)
+        with open(cache.joinpath("hparams.pkl"), "wb") as f:
+            pickle.dump(hparams, f)
+        mlflow.log_artifact(str(cache.joinpath("hparams.pkl")))
+        mlflow.pytorch.log_model(trainer.model, f"model")
+
+        # trainer.save(f"individual_{args.model_type}")  # save model in hparams.save_dir
         print("Finish Training")
 
     except Exception as e:

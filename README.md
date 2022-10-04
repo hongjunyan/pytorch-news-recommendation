@@ -50,7 +50,7 @@ if you want to train a formal model, please use `mind_type=large`.
 | Algorithms \ Metrics | AUC        | MRR        | NDCG@5     | NDCG@10    |
 |----------------------|------------|------------|------------|------------|
 | NPA                  | 0.6655     | 0.3171     | 0.3504     | 0.4143     |
-| FastFormer           | 0.6752     | 0.3222     | 0.3559     | 0.4206     |
+| FastFormer           | 0.6813     | 0.3287     | 0.3633     | 0.4273     |
 | NRMS                 | **0.6822** | **0.3307** | **0.3655** | **0.4311** |
 
 ## Related projects
@@ -67,5 +67,5 @@ if you want to train a formal model, please use `mind_type=large`.
 [MIND]: https://msnews.github.io/
 [Fastformer]: https://arxiv.org/pdf/2108.09084.pdf
 
-## Some TroubleShotting:
+## TroubleShooting:
 - Nan in Tensor (refer to FastSelfAttention in models/fastformer.py): https://discuss.pytorch.org/t/why-i-keep-getting-nan/20383

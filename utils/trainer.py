@@ -7,15 +7,15 @@ from tqdm import tqdm
 import torch
 import numpy as np
 import mlflow
+from ray.air import session
 
 # Customize module
-from utils import ModelLogger
 from utils import HyperParams, groupping_labels, cal_metric, MINDIterator
 from models import NPAModel, NRMSModel, FastFormerNewsRecModel
 
 
 class Trainer(object):
-    def __init__(self, hparams: HyperParams, run_uuid):
+    def __init__(self, hparams: HyperParams):
         self.hparams = hparams
         self.support_models = {
             "npa": NPAModel,
@@ -177,7 +177,8 @@ class Trainer(object):
             train_news_file,
             train_behaviors_file,
             valid_news_file,
-            valid_behaviors_file):
+            valid_behaviors_file,
+            is_tune=False):
 
         best_auc = 0
         total_step = 0
@@ -196,7 +197,7 @@ class Trainer(object):
                 total_step += 1
                 if step % self.hparams.show_step == 0:
                     eval_res = self.evaluate(valid_news_file, valid_behaviors_file)
-                    mlflow.log_metric("train_loss", epoch_loss / step, total_step)
+                    mlflow.log_metric("running_loss", epoch_loss / step, total_step)
                     for item in sorted(eval_res.items(), key=lambda x: x[0]):
                         valid_name = item[0].replace("@", "_")
                         mlflow.log_metric(valid_name, item[1], total_step)
@@ -209,8 +210,16 @@ class Trainer(object):
                             "best_step": total_step
                         })
 
-    def save(self):
-        self.model.save()
+                    if is_tune:
+                        session.report({
+                            "group_auc": eval_res["group_auc"],
+                            "mean_mrr": eval_res["mean_mrr"],
+                            "ndcg_5": eval_res["ndcg@5"],
+                            "ndcg_10": eval_res["ndcg@10"],
+                        })
+
+    def save(self, filename=None):
+        self.model.save(filename)
 
     def load(self):
         self.model.load()
