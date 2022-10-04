@@ -60,6 +60,8 @@ then hit http://127.0.0.1:5000
 
 
 ## Results of Formal Model
+I train the bellowing models with `epochs=15, batch_size=128`
+
 | Algorithms \ Metrics | AUC        | MRR        | NDCG@5     | NDCG@10    |
 |----------------------|------------|------------|------------|------------|
 | NPA                  | 0.6655     | 0.3171     | 0.3504     | 0.4143     |
