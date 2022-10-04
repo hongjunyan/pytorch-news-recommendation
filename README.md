@@ -34,16 +34,29 @@ $> conda activate deepnewsrec
 ```
 
 ## How to run the code
-Try a toy example with `mind_type=demo` and `epochs=1` 
-```commandline
+- Try a toy example with `demo` dataset 
+```commandline 
 $> mlflow run -e train --experiment-name individual_runs -P mind_type=demo -P epochs=1 .
 ```
+or you can use git uri
+```commandline
+$> mlflow run -e train --experiment-name individual_runs -P mind_type=demo -P epochs=1 git@github.com:hongjunyan/pytorch-news-recommendation.git 
+```
+
 - Run hyperparameter tuning
 ```commandline
 $> mlflow run -e tune_with_ray --experiment-name tune_hyperparams -P mind_type=demo -P epochs=1 .
 ```
 
 if you want to train a formal model, please use `mind_type=large`.
+
+## MLFlow UI
+The experiment results recorded in `/mlruns`. You can use `mlflow ui` to open a web UI and compare the results on it.
+```commandline
+$> mlflow ui -h 127.0.0.1
+```
+then hit http://127.0.0.1:5000
+![img.png](imgs/mlflow_ui.png)
 
 
 ## Results of Formal Model
